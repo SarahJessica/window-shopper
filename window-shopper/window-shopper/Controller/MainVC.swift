@@ -11,6 +11,17 @@ import UIKit
 class MainVC: UIViewController {
     @IBOutlet weak var hourlyWageTxtFld: CurrencyTxtFld!
     @IBOutlet weak var priceTxtFld: CurrencyTxtFld!
+    @IBOutlet weak var resultLbl: UILabel!
+    @IBOutlet weak var hoursLbl: UILabel!
+   
+    @IBAction func clearCalcPressed(_ sender: Any) {
+        resultLbl.isHidden = true
+        hoursLbl.isHidden = true
+        hourlyWageTxtFld.text = ""
+        priceTxtFld.text = ""
+        
+        
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,11 +34,31 @@ class MainVC: UIViewController {
         
         hourlyWageTxtFld.inputAccessoryView = calcBtn
         priceTxtFld.inputAccessoryView = calcBtn
+        
+        resultLbl.isHidden = true
+        hoursLbl.isHidden = true
     }
     
     @objc
     func calculate() {
-        print("calculation called")
+        if let wageTxt = hourlyWageTxtFld.text, let priceTxt = priceTxtFld.text {
+            if let wage = Double(wageTxt), let price = Double(priceTxt) {
+                view.endEditing(true)
+                resultLbl.isHidden = false
+                hoursLbl.isHidden = false
+                let result = Wage.getHours(forWage: wage, andPrice: price)
+                resultLbl.text = "\(result)"
+                if result == 1 {
+                    hoursLbl.text = "hour"
+                } else {
+                    hoursLbl.text = "hours"
+                }
+            } else {
+                hoursLbl.isHidden = false
+                hoursLbl.text = "Oops, check your inputs!"
+            }
+            
+        }
     }
 
     override func didReceiveMemoryWarning() {
